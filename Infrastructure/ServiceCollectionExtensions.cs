@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 
 namespace Infrastructure
 {
@@ -13,7 +14,7 @@ namespace Infrastructure
             {
                 var connStr = configuration.GetConnectionString("DefaultConnection");
                 var serverVersion = MySqlServerVersion.AutoDetect(connStr);
-                option.UseMySql(connStr, serverVersion);
+                option.UseMySql(connStr, serverVersion, o => o.SchemaBehavior(MySqlSchemaBehavior.Ignore));
             });
 
             return services;
