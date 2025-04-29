@@ -15,7 +15,7 @@ namespace Infrastructure
                 var connStr = configuration.GetConnectionString("DefaultConnection");
                 var serverVersion = MySqlServerVersion.AutoDetect(connStr);
                 option.UseMySql(connStr, serverVersion, o => o.SchemaBehavior(MySqlSchemaBehavior.Ignore));
-            });
+            }).AddTransient<ApplicationDbSeeder>();
 
             return services;
         }
