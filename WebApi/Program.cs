@@ -8,7 +8,7 @@ builder.Services.AddDatabase(builder.Configuration);
 builder.Services.AddIdentitySettings();
 builder.Services.AddOpenApi();
 builder.Services.AddSwagger();
-
+builder.Services.AddJWTAuthentication(builder.Services.GetAppConfiguration(builder.Configuration));
 
 var app = builder.Build();
 
