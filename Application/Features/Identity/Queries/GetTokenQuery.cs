@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Application.Features.Identity.Queries
 {
-    public class GetTokenQuery :IRequest<IResponseWrapper>
+    public class GetTokenQuery : IRequest<IResponseWrapper>
     {
         public TokenRequest TokenRequest { get; set; }
     }
@@ -19,9 +19,9 @@ namespace Application.Features.Identity.Queries
             _tokenService = tokenService;
         }
 
-        public Task<IResponseWrapper> Handle(GetTokenQuery request, CancellationToken cancellationToken)
+        public async Task<IResponseWrapper> Handle(GetTokenQuery request, CancellationToken cancellationToken)
         {
-            return _tokenService.GetTokenAsync(request.TokenRequest);
+            return await _tokenService.GetTokenAsync(request.TokenRequest);
         }
     }
 
