@@ -1,6 +1,5 @@
 ﻿using Application.Features.Identity.Queries;
 using Common.Requests;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers.Identity
@@ -8,7 +7,7 @@ namespace WebApi.Controllers.Identity
     [Route("api/[controller]")]
     public class TokenController : BasicController<TokenController>
     {
-        [HttpGet("get-token")]
+        [HttpPost("get-token")]
         public async Task<IActionResult> GetTokenAsync(TokenRequest tokenRequest)
         {
             var response = await MediatorSender.Send(new GetTokenQuery { TokenRequest = tokenRequest });
@@ -19,7 +18,7 @@ namespace WebApi.Controllers.Identity
             return BadRequest(response);
         }
 
-        [HttpGet("refresh-token")]
+        [HttpPost("refresh-token")]
         public async Task<IActionResult> RefreshTokenAsync(RefreshTokenRequest refreshTokenRequest)
         {
             var response = await MediatorSender.Send(new GetRefreshTokenQuery { RefreshTokenRequest = refreshTokenRequest });

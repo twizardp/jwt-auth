@@ -50,11 +50,37 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    internal static IServiceCollection AddSwagger(this IServiceCollection services)
+    internal static void RegisterSwagger(this IServiceCollection services)
     {
-        services.AddSwaggerGen(c =>
+        services.AddSwaggerGen(options =>
         {
-            c.SwaggerDoc("v1", new OpenApiInfo
+            options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            {
+                Description = "JWT Bearer",
+                Name = "Authorization",
+                In = ParameterLocation.Header,
+                Type = SecuritySchemeType.ApiKey,
+                Scheme = "Bearer",
+                BearerFormat = "JWT"
+            });
+            options.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        },
+                        Scheme = "Bearer",
+                        Name = "Bearer",
+                        In = ParameterLocation.Header
+                    },
+                    Array.Empty<string>()
+                }
+            });
+            options.SwaggerDoc("v1", new OpenApiInfo
             {
                 Title = "jwt-auth API",
                 Version = "v1",
@@ -65,11 +91,9 @@ public static class ServiceCollectionExtensions
             var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
             if (File.Exists(xmlPath))
             {
-                c.IncludeXmlComments(xmlPath);
+                options.IncludeXmlComments(xmlPath);
             }
         });
-
-        return services;
     }
 
     internal static IServiceCollection AddJWTAuthentication(this IServiceCollection services, AppConfiguration config)

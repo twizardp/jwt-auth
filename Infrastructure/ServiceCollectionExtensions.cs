@@ -1,4 +1,6 @@
-﻿using Infrastructure.DbContext;
+﻿using Application.Services.Identity;
+using Infrastructure.DbContext;
+using Infrastructure.Services.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,6 +19,12 @@ namespace Infrastructure
                 option.UseMySql(connStr, serverVersion, o => o.SchemaBehavior(MySqlSchemaBehavior.Ignore));
             }).AddTransient<ApplicationDbSeeder>();
 
+            return services;
+        }
+
+        public static IServiceCollection AddServices(this IServiceCollection services)
+        {
+            services.AddScoped<ITokenService, TokenService>();
             return services;
         }
     }

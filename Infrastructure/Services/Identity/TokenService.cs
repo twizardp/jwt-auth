@@ -51,7 +51,7 @@ namespace Infrastructure.Services.Identity
             }
 
             var isPasswordVaild = await _userManager.CheckPasswordAsync(user, tokenRequest.Password);
-            if (isPasswordVaild)
+            if (!isPasswordVaild)
             {
                 return await ResponseWrapper<TokenResponse>.FailAsync("invalid credentials.");
             }
