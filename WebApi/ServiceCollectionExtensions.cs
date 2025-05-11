@@ -1,8 +1,4 @@
-﻿using System.Net;
-using System.Reflection;
-using System.Security.Claims;
-using System.Text;
-using Application.AppConfigs;
+﻿using Application.AppConfigs;
 using Common.Authorization;
 using Common.Responses.Wrappers;
 using Infrastructure.DbContext;
@@ -12,6 +8,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Net;
+using System.Reflection;
+using System.Security.Claims;
+using System.Text;
 using WebApi.Permissions;
 
 namespace WebApi;
@@ -97,12 +97,12 @@ public static class ServiceCollectionExtensions
     }
 
     internal static IServiceCollection AddJWTAuthentication(this IServiceCollection services, AppConfiguration config)
-    {
-        var key = Encoding.UTF8.GetBytes(config.Secret);
+    {    
         services.AddAuthentication(opt =>
         {
             opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            opt.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
         }).AddJwtBearer(bearer =>
             {
                 bearer.RequireHttpsMetadata = false;
@@ -110,13 +110,12 @@ public static class ServiceCollectionExtensions
                 bearer.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.Secret)),
                     ValidateIssuer = false,
                     ValidateAudience = false,
                     RoleClaimType = ClaimTypes.Role,
                     ClockSkew = TimeSpan.Zero
                 };
-
                 bearer.Events = new JwtBearerEvents
                 {
                     OnAuthenticationFailed = context =>
@@ -131,7 +130,8 @@ public static class ServiceCollectionExtensions
                         {
                             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                             context.Response.ContentType = "application/json";
-                            return context.Response.WriteAsJsonAsync(ResponseWrapper.Fail("An unhandled error has occurred"));
+                            Console.WriteLine(context.Exception);
+                            return context.Response.WriteAsJsonAsync(ResponseWrapper.Fail("出现了一个未处理的错误"));
                         }
                     },
                     OnChallenge = context =>
@@ -141,7 +141,7 @@ public static class ServiceCollectionExtensions
                         {
                             context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
                             context.Response.ContentType = "application/json";
-                            return context.Response.WriteAsJsonAsync(ResponseWrapper.Fail("Unauthorized"));
+                            return context.Response.WriteAsJsonAsync(ResponseWrapper.Fail("未授权"));
                         }
                         return Task.CompletedTask;
                     },
@@ -149,7 +149,7 @@ public static class ServiceCollectionExtensions
                     {
                         context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
                         context.Response.ContentType = "application/json";
-                        return context.Response.WriteAsJsonAsync(ResponseWrapper.Fail("Forbidden"));
+                        return context.Response.WriteAsJsonAsync(ResponseWrapper.Fail("禁止访问该资源"));
                     }
 
                 };

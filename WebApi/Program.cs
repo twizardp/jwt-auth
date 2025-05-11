@@ -1,5 +1,6 @@
 using Application;
 using Infrastructure;
+using Microsoft.IdentityModel.Logging;
 using WebApi;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,7 +25,7 @@ if (app.Environment.IsDevelopment())
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "SwaggerDemo API V1");
     });
 }
-
+IdentityModelEventSource.ShowPII = true;
 app.SeedDatabase();
 
 app.UseHttpsRedirection();

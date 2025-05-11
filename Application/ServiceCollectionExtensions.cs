@@ -14,6 +14,7 @@ namespace Application
         {
             var assembly = Assembly.GetExecutingAssembly();
             services.AddMediatR(config => config.RegisterServicesFromAssembly(assembly));
+            services.AddAutoMapper(assembly);
             return services;
         }
     }

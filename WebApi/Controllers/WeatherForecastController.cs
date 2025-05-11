@@ -1,4 +1,6 @@
+using Common.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using WebApi.Attributes;
 
 namespace WebApi.Controllers
 {
@@ -18,6 +20,7 @@ namespace WebApi.Controllers
             _logger = logger;
         }
 
+        [MustHavePermission(AppFeature.Employees, AppAction.Read)]
         [HttpGet(Name = "GetWeatherForecast")]
         public IEnumerable<WeatherForecast> Get()
         {
